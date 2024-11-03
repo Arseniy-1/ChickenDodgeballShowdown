@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ball : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+public class Ball : MonoBehaviour, IInteractable, ITarget
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Rigidbody Rigidbody {get; private set;}
 
-    // Update is called once per frame
-    void Update()
+    public Transform Transform => transform;
+
+    private void Awake()
     {
-        
+        Rigidbody = GetComponent<Rigidbody>();
     }
 }

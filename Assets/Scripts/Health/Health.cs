@@ -9,7 +9,7 @@ public class Health
     public event Action<float, float> HealthChanged;
     public event Action Died;
 
-    public void Awake()
+    public Health()
     {
         _currentHealthPoint = _maxHealth;
     }
