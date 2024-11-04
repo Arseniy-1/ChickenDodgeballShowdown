@@ -9,15 +9,15 @@ namespace Darchi.DodgeballShowdown.StateMashine
         private List<IState> _states;
         private IState _currentState;
 
-        public StateMashine(IStateMashineHolder holder, params IState[] states)
+        public StateMashine(List<IState> states)
         {
-            _currentState = _states[0];
-            _currentState.Enter();
-
             foreach (IState state in states)
             {
-                _states.Add(state);
+                state.Initialize(this);
             }
+
+            _states = states;
+            EnterStartState();
         }
 
         public void SwitchState<T>() where T : IState
@@ -31,6 +31,12 @@ namespace Darchi.DodgeballShowdown.StateMashine
 
         public void Update() => _currentState.Update();
 
+        protected void EnterStartState()
+        {
+            _currentState = _states[0];
+            _currentState.Enter();
+        }
+
         protected void SetStartStates(params IState[] states)
         {
             foreach (IState state in states)
@@ -42,29 +48,31 @@ namespace Darchi.DodgeballShowdown.StateMashine
 
     public class EnemyStateMashine : StateMashine
     {
-        public EnemyStateMashine(EnemyBehaviour enemyBehaviour) : base(enemyBehaviour)
+        public EnemyStateMashine(List<IState> states) : base(states)
         {
-            SetStartStates(new IdleState(this, enemyBehaviour), new EnemyMoveState(this, enemyBehaviour));
         }
     }
 
     public class PlayerStateMashine : StateMashine
     {
-        public PlayerStateMashine(PlayerBehaviour playerBehaviour, IdleState idleState) : base(playerBehaviour)
+        public PlayerStateMashine(List<IState> states) : base(states)
         {
-            SetStartStates(new IdleState(this, playerBehaviour), new PlayerMoveState(this, playerBehaviour));
         }
     }
 
     public class IdleState : IState
     {
-        private readonly IStateSwitcher _stateSwitcher;
-        private readonly EnemyBehaviour _enemy;
+        private readonly EntityBehaviour _entity;
+        private IStateSwitcher _stateSwitcher;
 
-        public IdleState(IStateSwitcher stateSwitcher, EnemyBehaviour enemy)
+        public IdleState(EntityBehaviour entity)
+        {
+            _entity = entity;
+        }
+
+        public void Initialize(IStateSwitcher stateSwitcher)
         {
             _stateSwitcher = stateSwitcher;
-            _enemy = enemy;
         }
 
         public virtual void Enter()
@@ -78,20 +86,24 @@ namespace Darchi.DodgeballShowdown.StateMashine
 
         public virtual void Update()
         {
-            if (_enemy.BallHolder.HasBall == false)
+            if (_entity.BallHolder.HasBall == false)
                 _stateSwitcher.SwitchState<MoveState>();
         }
     }
 
     public abstract class MoveState : IState
     {
-        protected IStateSwitcher StateSwitcher { get; private set; }
-        protected EnemyBehaviour Enemy {  get; private set; }
+        public IStateSwitcher StateSwitcher { get; protected set; }
+        protected EntityBehaviour Entity { get; private set; }
 
-        public MoveState(IStateSwitcher stateSwitcher, EnemyBehaviour enemy)
+        public MoveState(EntityBehaviour entity)
+        {
+            Entity = entity;
+        }
+
+        public void Initialize(IStateSwitcher stateSwitcher)
         {
             StateSwitcher = stateSwitcher;
-            Enemy = enemy;
         }
 
         public virtual void Enter()
@@ -105,23 +117,23 @@ namespace Darchi.DodgeballShowdown.StateMashine
 
         public virtual void Update()
         {
-            if (Enemy.GroundChecker.IsGrounded)
+            if (Entity.GroundChecker.IsGrounded)
             {
-                Vector3 direction = Vector3.ProjectOnPlane(Enemy.TargetScaner.Ball.transform.position - Enemy.transform.position, Vector3.up).normalized;
+                Vector3 direction = Vector3.ProjectOnPlane(Entity.TargetScaner.Ball.transform.position - Entity.transform.position, Vector3.up).normalized;
 
                 Quaternion rotation = Quaternion.LookRotation(direction);
                 rotation.x = 0;
                 rotation.z = 0;
 
-                Enemy.transform.rotation = Quaternion.Lerp(Enemy.transform.rotation, rotation, 2 * Time.deltaTime);//Магическое число - скорость поворота
-                Enemy.transform.position += Enemy.transform.forward * Time.deltaTime * 4; //Магическое число - скорость
+                Entity.transform.rotation = Quaternion.Lerp(Entity.transform.rotation, rotation, 2 * Time.deltaTime);//Магическое число - скорость поворота
+                Entity.transform.position += Entity.transform.forward * Time.deltaTime * 4; //Магическое число - скорость
             }
         }
     }
 
     public class EnemyMoveState : MoveState
     {
-        public EnemyMoveState(IStateSwitcher stateSwitcher, EnemyBehaviour enemy) : base(stateSwitcher, enemy)
+        public EnemyMoveState(EnemyBehaviour enemy) : base(enemy)
         {
         }
 
@@ -129,14 +141,14 @@ namespace Darchi.DodgeballShowdown.StateMashine
         {
             base.Update();
 
-            if (Enemy.BallHolder.HasBall)
+            if (Entity.BallHolder.HasBall)
                 StateSwitcher.SwitchState<AttackState>();
         }
     }
 
     public class PlayerMoveState : MoveState
     {
-        public PlayerMoveState(IStateSwitcher stateSwitcher, EnemyBehaviour enemy) : base(stateSwitcher, enemy)
+        public PlayerMoveState(PlayerBehaviour player) : base(player)
         {
         }
 
@@ -144,20 +156,27 @@ namespace Darchi.DodgeballShowdown.StateMashine
         {
             base.Update();
 
-            if (Input.GetKeyDown(KeyCode.E) && Enemy.BallHolder.HasBall)
+            if (Entity.BallHolder.HasBall)
                 StateSwitcher.SwitchState<AttackState>();
+
+            if (Input.GetKeyDown(KeyCode.F) && Entity.GroundChecker.IsGrounded)
+                StateSwitcher.SwitchState<JumpState>();
         }
     }
 
     public class AttackState : IState
     {
-        private readonly IStateSwitcher _stateSwitcher;
-        private readonly EnemyBehaviour _enemy;
+        private readonly EntityBehaviour _entity;
+        private IStateSwitcher _stateSwitcher;
 
-        public AttackState(IStateSwitcher stateSwitcher, EnemyBehaviour enemy)
+        public AttackState(EntityBehaviour enemy)
+        {
+            _entity = enemy;
+        }
+
+        public void Initialize(IStateSwitcher stateSwitcher)
         {
             _stateSwitcher = stateSwitcher;
-            _enemy = enemy;
         }
 
         public virtual void Enter()
@@ -171,20 +190,17 @@ namespace Darchi.DodgeballShowdown.StateMashine
 
         public virtual void Update()
         {
-            Vector3 direction = Vector3.ProjectOnPlane(_enemy.TargetScaner.Player.transform.position - _enemy.transform.position, Vector3.up).normalized;
+            Vector3 direction = Vector3.ProjectOnPlane(_entity.TargetScaner.TargetEntity.transform.position - _entity.transform.position, Vector3.up).normalized;
 
             Quaternion rotation = Quaternion.LookRotation(direction);
             rotation.x = 0;
             rotation.z = 0;
 
-            _enemy.transform.rotation = rotation;//Магическое число - скорость поворота
+            _entity.transform.rotation = rotation;//Магическое число - скорость поворота
 
-            if (_enemy.BallHolder.HasBall)
-                _stateSwitcher.SwitchState<AttackState>();
-
-            if (_enemy.BallHolder.TryGetBall(out Ball ball))
+            if (Input.GetKeyDown(KeyCode.E) && _entity.BallHolder.TryGetBall(out Ball ball))
             {
-                _enemy.BallThrower.Throw(ball);
+                _entity.BallThrower.Throw(ball);
                 _stateSwitcher.SwitchState<MoveState>();
             }
         }
@@ -192,18 +208,22 @@ namespace Darchi.DodgeballShowdown.StateMashine
 
     public class JumpState : IState
     {
-        private readonly IStateSwitcher _stateSwitcher;
-        private readonly EnemyBehaviour _enemy;
+        private IStateSwitcher _stateSwitcher;
+        private readonly EntityBehaviour _entity;
 
-        public JumpState(IStateSwitcher stateSwitcher, EnemyBehaviour enemy)
+        public JumpState(EntityBehaviour entity)
+        {
+            _entity = entity;
+        }
+
+        public void Initialize(IStateSwitcher stateSwitcher)
         {
             _stateSwitcher = stateSwitcher;
-            _enemy = enemy;
         }
 
         public virtual void Enter()
         {
-            _enemy.Rigidbody.AddForce(Vector3.up * 200, ForceMode.Force);
+            _entity.Rigidbody.AddForce(Vector3.up * 350, ForceMode.Force);
             _stateSwitcher.SwitchState<IdleState>();
             Debug.Log(GetType());
         }

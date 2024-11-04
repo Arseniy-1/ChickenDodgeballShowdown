@@ -9,6 +9,8 @@ public class Ball : MonoBehaviour, IInteractable, ITarget
 
     public Transform Transform => transform;
 
+    public bool IsPlayer => throw new System.NotImplementedException();
+
     private void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();

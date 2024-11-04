@@ -1,31 +1,10 @@
 ﻿using UnityEngine;
 using Darchi.DodgeballShowdown.StateMashine;
 
-public class EnemyBehaviour : MonoBehaviour, IStateMashineHolder, ITarget
+public class EnemyBehaviour : EntityBehaviour 
 {
-    [field: SerializeField] public Health Health { get; private set; }
-    [field: SerializeField] public BallHolder BallHolder { get; private set; }
-    [field: SerializeField] public BallThrower BallThrower { get; private set; }
-    [field: SerializeField] public TargetScaner TargetScaner { get; private set; }
-    [field: SerializeField] public EnemyAnimatorController Animator { get; private set; }
-    [field: SerializeField] public Rigidbody Rigidbody { get; private set; }
-    [field: SerializeField] public GroundChecker GroundChecker { get; private set; }
-
-    private EnemyStateMashine _stateMachine;
-    private TargetProvider _targetProvider;
-
-    public bool HasTarget => _targetProvider.Target != null && _targetProvider.Target.Transform.position != null;
-
-    public Transform Transform => transform;
-
-    private void Awake()
+    protected override void Update()
     {
-        _targetProvider = new();
-        _stateMachine = new EnemyStateMashine(this);
-    }
-
-    private void Update()
-    {
-        _stateMachine.Update();
+        base.Update();
     }
 }

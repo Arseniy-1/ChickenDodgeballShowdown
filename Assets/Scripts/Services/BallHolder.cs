@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.XR;
 
 public class BallHolder : MonoBehaviour
@@ -6,8 +7,10 @@ public class BallHolder : MonoBehaviour
     [SerializeField] private Ball _ball;
     [SerializeField] private Transform _hand;
     [SerializeField] private CollisionHandler _collisionHandler;
-
+    
     [field: SerializeField] public bool HasBall => _ball != null;
+
+    public event Action BallTaken;
 
     private void OnEnable()
     {
@@ -41,5 +44,6 @@ public class BallHolder : MonoBehaviour
         ball.Rigidbody.Sleep();
         ball.transform.parent = _hand.transform;
         ball.transform.position = _hand.transform.position;
+        BallTaken?.Invoke();
     }
 }

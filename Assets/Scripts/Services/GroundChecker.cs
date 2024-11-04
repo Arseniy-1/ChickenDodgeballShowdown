@@ -10,7 +10,6 @@ public class GroundChecker : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(IsGrounded);
     }
 
     private void OnDrawGizmos()
