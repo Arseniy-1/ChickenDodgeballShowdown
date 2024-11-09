@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TargetScaner : MonoBehaviour
+public class TargetProvider : MonoBehaviour
 {
     [SerializeField] private float _scanRadius = 150f;
     [SerializeField] private Entitys _targetEntity;
@@ -11,6 +11,16 @@ public class TargetScaner : MonoBehaviour
     private void Update()
     {
         Scan();
+    }
+
+    public void SelectBall(Ball ball)
+    {
+        Ball = ball;
+    }
+
+    public void DeselectBall()
+    {
+        Ball = null;
     }
 
     public void Scan()
@@ -26,19 +36,9 @@ public class TargetScaner : MonoBehaviour
                     if (entity.EntityType == _targetEntity)
                     {
                         TargetEntity = entity;
-                        Debug.Log(entity);
                     }
-                }
-                else if (target is Ball ball)
-                {
-                    Ball = ball;
                 }
             }
         }
     }
-}
-
-public enum Entitys
-{
-    Player, Enemy
 }

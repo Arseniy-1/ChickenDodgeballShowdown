@@ -7,6 +7,8 @@ public class GameSceneEntryPoint : MonoBehaviour
     [SerializeField] private PlayerBehaviour _playerBehaviourPrefab;
     [SerializeField] private EnemyBehaviour _enemyBehaviourPrefab;
 
+    [SerializeField] private Arena _arenaPrefab;
+
     [SerializeField] private int _playerCount = 1;
     [SerializeField] private int _enemyCount = 1;
 
@@ -23,7 +25,7 @@ public class GameSceneEntryPoint : MonoBehaviour
             {
             new IdleState(player),
             new PlayerMoveState(player),
-            new AttackState(player),
+            new PlayerAttackState(player),
             new JumpState(player)
             };
 
@@ -41,7 +43,7 @@ public class GameSceneEntryPoint : MonoBehaviour
             {
             new IdleState(enemy),
             new EnemyMoveState(enemy),
-            new AttackState(enemy),
+            new EnemyAttackState(enemy),
             new JumpState(enemy)
             };
 
@@ -49,6 +51,7 @@ public class GameSceneEntryPoint : MonoBehaviour
             enemy.Construct(enemyStateMashine);
 
             _enemyBehaviours.Add(enemy);
+            Debug.Log("CE");
         }
 
         List<IState> firstSquadStates = new List<IState>
@@ -84,6 +87,6 @@ public class GameSceneEntryPoint : MonoBehaviour
             new Squad(_enemyBehaviours, secondSquadStateMashine)
         };
 
-        Arena arena = new(squad);
+        _arenaPrefab.Initialize(squad);
     }
 }

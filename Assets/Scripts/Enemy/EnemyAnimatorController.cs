@@ -1,10 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class EnemyAnimatorController
 {
     private Animator _animator;
 
+    private int _move = Animator.StringToHash(Constans.Animation.IsMovement);
     public void Initialize(Animator animator) => _animator = animator;
+
+    public void New()
+    {
+        _animator.Play(_move);
+    }
 
     public void StartIdling() => _animator.SetBool(Constans.Animation.IsIdling, true);
     public void StopIdling() => _animator.SetBool(Constans.Animation.IsIdling, false);
@@ -15,7 +22,7 @@ public class EnemyAnimatorController
     public void StartGrounded() => _animator.SetBool(Constans.Animation.IsGrounded, true);
     public void StopGrounded() => _animator.SetBool(Constans.Animation.IsGrounded, false);
 
-    public void StartJumping() => _animator.SetBool(Constans.Animation.IsJumping, true);
+    public void StartJumping() => _animator.SetBool(Constans.Animation.IsJumping, true); //_animator.Play;
     public void StopJumping() => _animator.SetBool(Constans.Animation.IsJumping, false);
 
     public void StartFalling() => _animator.SetBool(Constans.Animation.IsFalling, true);

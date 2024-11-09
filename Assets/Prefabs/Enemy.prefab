@@ -174,12 +174,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e5d8ec276c246440ad3f9925f9ba010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <EntityType>k__BackingField: 1
+  <Rigidbody>k__BackingField: {fileID: 6346711819510289161}
   <BallHolder>k__BackingField: {fileID: 6449397749537082353}
   <BallThrower>k__BackingField: {fileID: 8304171451671071887}
-  <TargetScaner>k__BackingField: {fileID: 3063667772779610169}
-  <Rigidbody>k__BackingField: {fileID: 6346711819510289161}
   <GroundChecker>k__BackingField: {fileID: 7046809884829452546}
-  <EntityType>k__BackingField: 1
+  <TargetProvider>k__BackingField: {fileID: 3063667772779610169}
 --- !u!114 &8304171451671071887
 MonoBehaviour:
   m_ObjectHideFlags: 0

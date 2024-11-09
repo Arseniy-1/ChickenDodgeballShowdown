@@ -9,4 +9,9 @@ public class PlayerBehaviour : EntityBehaviour
     {
         base.Update();
     }
+
+    public override void ChangeToIdleState()
+    {
+        StateMashine.SwitchState<IdleState>();
+    }
 }
