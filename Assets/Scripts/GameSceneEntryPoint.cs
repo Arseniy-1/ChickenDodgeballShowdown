@@ -29,7 +29,7 @@ public class GameSceneEntryPoint : MonoBehaviour
             new JumpState(player)
             };
 
-            PlayerStateMashine playerStateMashine = new PlayerStateMashine(playerStates);
+            EntityStateMashine playerStateMashine = new EntityStateMashine(playerStates);
             player.Construct(playerStateMashine);
 
             _playerBehaviours.Add(player);
@@ -47,11 +47,10 @@ public class GameSceneEntryPoint : MonoBehaviour
             new JumpState(enemy)
             };
 
-            EnemyStateMashine enemyStateMashine = new EnemyStateMashine(enemyStates);
+            EntityStateMashine enemyStateMashine = new EntityStateMashine(enemyStates);
             enemy.Construct(enemyStateMashine);
 
             _enemyBehaviours.Add(enemy);
-            Debug.Log("CE");
         }
 
         List<IState> firstSquadStates = new List<IState>

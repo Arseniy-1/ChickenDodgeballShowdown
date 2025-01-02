@@ -13,7 +13,7 @@ public abstract class EntityBehaviour : MonoBehaviour, IStateMashineHolder, ITar
     [field: SerializeField] public EnemyAnimatorController Animator { get; protected set; }
     [field: SerializeField] public TargetProvider TargetProvider { get; protected set; }
 
-    protected StateMashine StateMashine;
+    protected EntityStateMashine StateMashine;
 
     public event Action<EntityBehaviour> BallTaken;
 
@@ -31,7 +31,7 @@ public abstract class EntityBehaviour : MonoBehaviour, IStateMashineHolder, ITar
 
     public abstract void ChangeToIdleState();
 
-    public virtual void Construct(StateMashine stateMashine)
+    public virtual void Construct(EntityStateMashine stateMashine)
     {
         StateMashine = stateMashine;
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.XR;
 
 public class BallHolder : MonoBehaviour
 {
@@ -41,9 +40,10 @@ public class BallHolder : MonoBehaviour
     private void EquipBall(Ball ball)
     {
         _ball = ball;
-        ball.Rigidbody.Sleep();
-        ball.transform.parent = _hand.transform;
-        ball.transform.position = _hand.transform.position;
         BallTaken?.Invoke();
+        ball.transform.position = _hand.transform.position;
+        ball.transform.rotation = _hand.transform.rotation;
+        ball.transform.parent = _hand.transform;
+        ball.Rigidbody.Sleep();
     }
 }

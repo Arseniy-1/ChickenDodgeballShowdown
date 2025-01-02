@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerBehaviour : EntityBehaviour
 {
-    public InputHandler InputHandler { get; private set; }
+    [field: SerializeField] public PlayerInputController PlayerInputController { get; private set; }
 
     protected override void Update()
     {

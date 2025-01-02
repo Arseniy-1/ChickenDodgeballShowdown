@@ -29,11 +29,3 @@ public class CollisionHandler : MonoBehaviour
         }
     }
 }
-
-    //private void EquipBall(Ball ball)
-    //{
-    //    _ball = ball;
-    //    ball.Rigidbody.Sleep();
-    //    ball.transform.parent = _hand.transform;
-    //    ball.transform.position = _hand.transform.position;
-    //}
